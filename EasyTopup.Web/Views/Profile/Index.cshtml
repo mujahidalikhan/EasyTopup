@@ -1,0 +1,227 @@
+﻿@model EasyTopup.Data.ViewModels.ProfileViewModel
+@using EasyTopup.Web.Extensions
+@{
+    ViewData["Title"] = "Profile";
+}
+@section Styles{
+
+}
+@section Scripts{
+    <script src="~/app-assets/vendors/js/forms/select/select2.full.min.js"></script>
+    <script src="~/app-assets/vendors/js/forms/validation/jqBootstrapValidation.js"></script>
+    <script src="~/app-assets/vendors/js/pickers/pickadate/picker.js"></script>
+    <script src="~/app-assets/vendors/js/pickers/pickadate/picker.date.js"></script>
+    <script src="~/app-assets/vendors/js/extensions/dropzone.min.js"></script>
+    <script>
+        $("#btnSelectPhoto").click(function (e) {
+            $("#imageUpload").click();
+        });
+        $("#btnResetPhoto").click(function (e) {
+            $('#profileImage').attr('src', "/app-assets/images/user.png");
+            $('#base64Picture').val("");
+        });
+
+        function readFile() {
+            if (this.files && this.files[0]) {
+                $('#profileImage').attr('src', window.URL.createObjectURL(this.files[0]));
+                var FR = new FileReader();
+                FR.addEventListener("load", function (e) {
+                    document.getElementById("b64").innerHTML = e.target.result;
+                    $('#base64Picture').val($('#b64').text());
+                });
+                FR.readAsDataURL(this.files[0]);
+            }
+        }
+        document.getElementById("imageUpload").addEventListener("change", readFile);
+    </script>
+}
+<div class="content-wrapper">
+    <div class="content-header row">
+        <div class="content-header-left col-12 mb-2 mt-1">
+            <div class="row breadcrumbs-top">
+                <div class="col-6">
+                    <h5 class="content-header-title float-left pr-1 mb-0" style="border-right: none;">@ViewData["Title"]</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <section id="page-account-settings">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <!-- left menu section -->
+                        <div class="col-md-3 mb-2 mb-md-0 pills-stacked">
+                            <ul class="nav nav-pills flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center active" id="account-pill-general" data-toggle="pill" href="#account-vertical-general" aria-expanded="true">
+                                        <i class="bx bx-cog"></i>
+                                        <span>General</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center" id="account-pill-password" data-toggle="pill" href="#account-vertical-password" aria-expanded="false">
+                                        <i class="bx bx-lock"></i>
+                                        <span>Change Password</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- right content section -->
+                        <div class="col-md-9">
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="account-vertical-general" aria-labelledby="account-pill-general" aria-expanded="true">
+                                                @using (Html.BeginForm("Update", "Profile", FormMethod.Post, new { @id = "form-profile" }))
+                                                {
+                                                    @Html.HiddenFor(m => m.UserId)
+                                                    @Html.HiddenFor(m => m.CompanyId)
+                                                    @Html.HiddenFor(m => m.ShopId)
+                                                    <div class="media">
+                                                        <img id="profileImage" src="@Model.Picture" class="rounded mr-75" alt="profile image" height="64" width="64">
+                                                        <p id="b64" style="display:none;"></p>
+                                                        <input type="hidden" id="base64Picture" name="base64Picture" />
+                                                        <div class="media-body mt-25">
+                                                            <div class="col-12 px-0 d-flex flex-sm-row flex-column justify-content-start">
+                                                                <input type="file" id="imageUpload" style="display: none;">
+                                                                <button type="button" id="btnSelectPhoto" class="btn btn-sm btn-light-primary ml-50 mb-50 mb-sm-0 dz-clickable">Select new photo</button>
+                                                                <button type="button" id="btnResetPhoto" class="btn btn-sm btn-light-secondary ml-50">Reset</button>
+                                                            </div>
+                                                            <p class="text-muted ml-1 mt-50">
+                                                                <small>Allowed JPG, GIF or PNG.</small>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>Email</label>
+                                                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "email", @readonly = "readonly" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>First Name</label>
+                                                                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @id = "firstName" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>Last Name</label>
+                                                                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @id = "lastName" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>Phone</label>
+                                                                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @id = "phone" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>Description</label>
+                                                                    @Html.TextArea("Description", Model.Description, new { @class = "form-control", @id = "description" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @if (LocalStorageExtensions.Exists(StorageType.Token) &&
+                                                    (LocalStorageExtensions.Get(StorageType.Role) == "Company" || LocalStorageExtensions.Get(StorageType.Role) == "Shop") &&
+                                                    LocalStorageExtensions.Get(StorageType.Role) != "Admin")
+                                                        {
+                                                            @if (Model.listCompanies != null && Model.listCompanies.Count > 0)
+                                                            {
+                                                                <div class="col-12">
+                                                                    <div class="form-group">
+                                                                        <label>Company</label>
+                                                                        @Html.DropDownListFor(m => m.CompanyId, new MultiSelectList(Model.listCompanies, "CompanyId", "Name"), new { @class = "form-control", @id = "company", @disabled = "disabled" })
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                        @if (LocalStorageExtensions.Exists(StorageType.Token) &&
+                                                    LocalStorageExtensions.Get(StorageType.Role) == "Shop" &&
+                                                    LocalStorageExtensions.Get(StorageType.Role) != "Admin")
+                                                        {
+                                                            @if (Model.listShops != null && Model.listShops.Count > 0)
+                                                            {
+                                                                <div class="col-12">
+                                                                    <div class="form-group">
+                                                                        <label>Shop</label>
+                                                                        @Html.DropDownListFor(m => m.ShopId, new MultiSelectList(Model.listShops, "ShopId", "Name"), new { @class = "form-control", @id = "shop", @disabled = "disabled" })
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                        <div class="col-12 d-flex flex-sm-row flex-column justify-content-end">
+                                                            <button type="submit" class="btn btn-primary glow mr-sm-1 mb-1">
+                                                                Save
+                                                                changes
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="tab-pane fade " id="account-vertical-password" role="tabpanel" aria-labelledby="account-pill-password" aria-expanded="false">
+                                                @using (Html.BeginForm("ChangePassword", "Profile", FormMethod.Post, new { @id = "form-password" }))
+                                                {
+                                                    @Html.HiddenFor(m => m.UserId)
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>Current Password</label>
+                                                                    @*<input type="password" class="form-control" required="" placeholder="Old Password" data-validation-required-message="This old password field is required" >*@
+                                                                    @Html.PasswordFor(m => m.CurrentPassword, new { @class = "form-control", @id = "currentPassword" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>New Password</label>
+                                                                    @*<input type="password" name="password" class="form-control" placeholder="New Password" required="" data-validation-required-message="The password field is required" minlength="6" >*@
+                                                                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control", @id = "newPassword" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group">
+                                                                <div class="controls">
+                                                                    <label>Retype new Password</label>
+                                                                    @*<input type="password" name="con-password" class="form-control" required="" data-validation-match-match="password" placeholder="New Password" data-validation-required-message="The Confirm password field is required" minlength="6" >*@
+                                                                    @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control", @id = "confirmPassword" })
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 d-flex flex-sm-row flex-column justify-content-end">
+                                                            <button type="submit" class="btn btn-primary glow mr-sm-1 mb-1">
+                                                                Save
+                                                                changes
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

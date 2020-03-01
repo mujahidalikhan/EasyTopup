@@ -1,0 +1,275 @@
+﻿@model EasyTopup.Data.ViewModels.ShopViewModel
+@using EasyTopup.Web.Extensions
+@{
+    ViewData["Title"] = "Shops";
+}
+@section Styles{
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/tables/datatable/datatables.min.css">
+    <!-- END: Vendor CSS-->
+}
+@section Scripts{
+    <!-- BEGIN: Page Vendor JS-->
+    <script src="~/app-assets/vendors/js/tables/datatable/datatables.min.js"></script>
+    <script src="~/app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
+    <!-- END: Page Vendor JS-->
+    <script src="~/app-assets/vendors/js/forms/select/select2.full.min.js"></script>
+    <script src="~/app-assets/vendors/js/forms/validation/jqBootstrapValidation.js"></script>
+    <script src="~/app-assets/vendors/js/pickers/pickadate/picker.js"></script>
+    <script src="~/app-assets/vendors/js/pickers/pickadate/picker.date.js"></script>
+    <script src="~/app-assets/vendors/js/extensions/dropzone.min.js"></script>
+    <script>
+        var oTable = $('#tableShops').DataTable({
+            //data: [],
+            filter: true,
+            lengthChange: true,
+            paging: true,
+            info: true,
+            autoWidth: false,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            pageLength: 5,
+            aaSorting: [[0, 'asc']],
+            columns: [
+                { title: "name", width: "20%" },
+                { title: "description", width: "20%" },
+                { title: "photo", width: "15%" },
+                { title: "phone", width: "15%" },
+                { title: "address", width: "10%" },
+                //{ title: "status", width: "10%" },
+                { title: "actions", width: "10%" },
+            ]
+        });
+
+        oTable.on('click', ".edit", function () {
+            if (confirm("Are you sure you want to edit this shop?")) {
+                var shopId = $(this).attr("shop-id");
+                
+            }
+            else {
+                alert("False");
+                return false;
+            }
+        });
+
+        oTable.on('click', ".block", function (e) {
+            if (confirm("Are you sure you want to block this shop?")) {
+                var shopId = $(this).attr("shop-id");
+                var row = $(e.currentTarget).closest("tr");
+                oTable.row(row).remove().draw(true);
+                var dataContract = {
+                    shopId: shopId,
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/Shop/Block/",
+                    async: true,
+                    dataType: "json",
+                    data: dataContract,
+                    success: function (resp) {
+                    },
+                    failure: function (resp) {
+                    },
+                    error: function (resp) {
+                    }
+                });
+            }
+            else {
+                return false;
+            }
+        });
+    </script>
+    <script>
+        $("#btnSelectPhoto").click(function (e) {
+            $("#imageUpload").click();
+        });
+        $("#btnResetPhoto").click(function (e) {
+            $('#profileImage').attr('src', "/app-assets/images/logo/topup_64.png");
+            $('#base64Picture').val("");
+        });
+
+        function readFile() {
+            if (this.files && this.files[0]) {
+                $('#profileImage').attr('src', window.URL.createObjectURL(this.files[0]));
+                var FR = new FileReader();
+                FR.addEventListener("load", function (e) {
+                    document.getElementById("b64").innerHTML = e.target.result;
+                    $('#base64Picture').val($('#b64').text());
+                });
+                FR.readAsDataURL(this.files[0]);
+            }
+        }
+        document.getElementById("imageUpload").addEventListener("change", readFile);
+    </script>
+}
+
+<div class="content-wrapper">
+    <div class="content-header row">
+        <div class="content-header-left col-12 mb-2 mt-1">
+            <div class="row breadcrumbs-top">
+                <div class="col-6">
+                    <h5 class="content-header-title float-left pr-1 mb-0" style="border-right: none;">@ViewData["Title"]</h5>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary glow float-right" data-toggle="modal" data-target="#modalAddShop" data-backdrop="false">Add Shop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <!-- shops list start -->
+        <section class="users-list-wrapper">
+            <div class="users-list-table">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <!-- datatable start -->
+                            <div class="table-responsive">
+                                <table id="tableShops" class="table">
+                                    <tbody>
+                                        @foreach (var item in Model.listShops)
+                                        {
+                                            <tr>
+                                                <td><a href="javascript:void(0)">@item.Name</a></td>
+                                                <td>@item.Description</td>
+                                                <td>
+                                                    @if (string.IsNullOrEmpty(item.Photo))
+                                                    {
+                                                        <img src="~/app-assets/images/logo/topup_64.png" class="rounded mr-75" height="32" width="32">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="@item.Photo" class="rounded mr-75" height="32" width="32">
+                                                    }
+                                                </td>
+                                                <td>@item.Phone</td>
+                                                <td>@item.Address</td>
+                                                @*<td>
+                                                    @if (item.IsDelete == false)
+                                                    {
+                                                        <span class="badge badge-light-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-light-danger">Banned</span>
+                                                    }
+                                                </td>*@
+                                                <td>
+                                                    @*<a href="javascript:void(0)" class="edit" data-toggle="tooltip" title="" shop-id="@item.ShopId" data-original-title="Edit Shop">
+                                                        <i class="bx bx-edit-alt"></i>
+                                                    </a>*@
+                                                    <a href="javascript:void(0)" class="block" data-toggle="tooltip" title="" shop-id="@item.ShopId" data-original-title="Block Shop">
+                                                        <i class="bx bxs-x-circle"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- datatable ends -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- shops list ends -->
+    </div>
+</div>
+
+<!--Default size Modal -->
+<div class="modal fade text-left" id="modalAddShop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel18" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel18">Add Shop</h4>
+            </div>
+            @using (Html.BeginForm("Create", "Shop", FormMethod.Post, new { @id = "form-shop" }))
+            {
+                <div class="modal-body">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Registration Number</label>
+                                            @Html.TextBoxFor(m => m.RegistrationNumber, new { @class = "form-control", @id = "registration" })
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @id = "name" })
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Address</label>
+                                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @id = "address" })
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @id = "phone" })
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            @Html.TextArea("Description", Model.Description, new { @class = "form-control", @id = "description", @rows = "3" })
+                                        </div>
+                                    </div>
+                                    @if (LocalStorageExtensions.Exists(StorageType.Token) &&
+                               LocalStorageExtensions.Get(StorageType.Role) == "Admin")
+                                    {
+                                        @if (Model.listCompanies != null && Model.listCompanies.Count > 0)
+                                        {
+                                            <div class="col-12" id="divCompany">
+                                                <div class="form-group">
+                                                    <label>Company</label>
+                                                    @Html.DropDownListFor(m => m.CompanyId, new MultiSelectList(Model.listCompanies, "CompanyId", "Name"), new { @class = "form-control", @id = "company" })
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Photo</label>
+                                            <div class="media">
+                                                <img id="profileImage" src="~/app-assets/images/logo/topup_64.png" class="rounded mr-75" alt="profile image" height="64" width="64">
+                                                <p id="b64" style="display:none;"></p>
+                                                <input type="hidden" id="base64Picture" name="base64Picture" />
+                                                <div class="media-body mt-25">
+                                                    <div class="col-12 px-0 d-flex flex-sm-row flex-column justify-content-start">
+                                                        <input type="file" id="imageUpload" style="display: none;">
+                                                        <button type="button" id="btnSelectPhoto" class="btn btn-sm btn-light-primary ml-50 mb-50 mb-sm-0 dz-clickable">Select new photo</button>
+                                                        <button type="button" id="btnResetPhoto" class="btn btn-sm btn-light-secondary ml-50">Reset</button>
+                                                    </div>
+                                                    <p class="text-muted ml-1 mt-50">
+                                                        <small>Allowed JPG, GIF or PNG.</small>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Close</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary ml-1">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Save</span>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

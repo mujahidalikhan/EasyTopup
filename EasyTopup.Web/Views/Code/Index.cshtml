@@ -1,0 +1,114 @@
+﻿@model EasyTopup.Data.ViewModels.CodeViewModel
+@{
+    ViewData["Title"] = "Codes";
+}
+@section Styles{
+
+}
+@section Scripts{
+    <script>
+        $("#colorRadio3").attr("checked", "checked");
+        $('input[type=radio][name=AddType]').change(function () {
+            if (this.id == 'colorRadio3') {
+                $("#rangeTo").show();
+                $("#rangeFrom").show();
+                $("#bulk").hide();
+            }
+            else if (this.id == 'colorRadio4') {
+                $("#rangeTo").hide();
+                $("#rangeFrom").hide();
+                $("#bulk").show();
+            }
+        });
+    </script>
+}
+
+<div class="content-wrapper">
+    <div class="content-header row">
+        <div class="content-header-left col-12 mb-2 mt-1">
+            <div class="row breadcrumbs-top">
+                <div class="col-6">
+                    <h5 class="content-header-title float-left pr-1 mb-0" style="border-right: none;">@ViewData["Title"]</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <!-- Basic Vertical form layout section start -->
+        <section id="basic-vertical-layouts">
+            <div class="row match-height">
+                <div class="col-md-12 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Add Codes</h4>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-body">
+                                @using (Html.BeginForm("Create", "Code", FormMethod.Post, new { @id = "form-code" }))
+                                {
+                                    <div class="form-body">
+                                        <div class="row">
+                                            @if (Model.listCards != null && Model.listCards.Count > 0)
+                                            {
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label>Cards</label>
+                                                        @Html.DropDownListFor(m => m.CardId, new MultiSelectList(Model.listCards, "CardId", "Name"), new { @class = "form-control", @id = "card" })
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <ul class="list-unstyled mb-0">
+                                                        <li class="d-inline-block mr-2 mb-1">
+                                                            <fieldset>
+                                                                <div class="radio radio-success">
+                                                                    @Html.RadioButtonFor(m => m.AddType, "Range", new { @name = "AddType", @id = "colorRadio3" })
+                                                                    <label for="colorRadio3">Add Range</label>
+                                                                </div>
+                                                            </fieldset>
+                                                        </li>
+                                                        <li class="d-inline-block mr-2 mb-1">
+                                                            <fieldset>
+                                                                <div class="radio radio-danger">
+                                                                    @Html.RadioButtonFor(m => m.AddType, "Bulk", new { @name = "AddType", @id = "colorRadio4" })
+                                                                    <label for="colorRadio4">Add Bulk</label>
+                                                                </div>
+                                                            </fieldset>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-12" id="rangeTo">
+                                                <div class="form-group">
+                                                    <label>From</label>
+                                                    @Html.TextBoxFor(m => m.CodesFrom, new { @class = "form-control", id = "codesFrom" })
+                                                </div>
+                                            </div>
+                                            <div class="col-12" id="rangeFrom">
+                                                <div class="form-group">
+                                                    <label>To</label>
+                                                    @Html.TextBoxFor(m => m.CodesTo, new { @class = "form-control", id = "codesTo" })
+                                                </div>
+                                            </div>
+                                            <div class="col-12" id="bulk" style="display: none;">
+                                                <div class="form-group">
+                                                    <label for="first-name-vertical">Add Bulk</label>
+                                                    @Html.TextArea("Codes", Model.Codes, new { @class = "form-control", @id = "codes" })
+                                                </div>
+                                            </div>
+                                            <div class="col-12 d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-primary mr-1 mb-1">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- // Basic Vertical form layout section end -->
+    </div>
+</div>

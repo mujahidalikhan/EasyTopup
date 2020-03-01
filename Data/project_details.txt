@@ -1,0 +1,88 @@
+AspNetUsers (FirstName, LastName, Picture, Role)
+AspNetRoles (Admin, Company, Shop)
+AspNetUserRoles
+AspNetUserClaims
+AspNetUserLogins
+
+Company
+(CompanyId, Name, Description, Photo, Phone, Address, IsDelete, Timestamp)
+CompanyShops
+(CompanyShopsId, CompanyId, ShopId)
+CompanyUsers (New)
+(CompanyUsersId, CompanyId, UserId)
+Shop
+(ShopId, Name, Description, Photo, Phone, Address, IsDelete, Timestamp)
+ShopUsers (New)
+(ShopUsersId, ShopId, UserId)
+Balance
+(BalanceId, ShopId, Amount, AmountAddBy, IsDelete, Timestamp)
+Card
+(CardId, CompanyId, Name, Description, Photo, Amount, IsDelete, Timestamp)
+Code
+(CodeId, CardId, Number, IsSold, SoldBy, AddBy, IsRange, IsDelete, Timestamp)
+Sale
+(SaleId, ShopId, CardId, UserId, IsDelete, Timestamp)
+RemainingBalance
+(RemainingBalanceId, SaleId, SaleAmount, PreviousAmount, CurrentAmount, IsDelete, Timestamp)
+
+DESCRIPTION:
+Admin can create companies only
+Admin/Company can create shops only
+Company can create cards only
+Company can add balance to shops only
+Shops will get cards of respective company shop belongs to
+
+User with role 'Company' logged-in for first time, needs to select company first.
+User with role 'Shop' logged-in for first time, needs to select company first.
+User with role 'Shop' logged-in for first time, needs to select shop first.
+
+(https://www.pixinvent.com/demo/frest-clean-bootstrap-admin-dashboard-template/html/ltr/vertical-menu-template-dark/dashboard-analytics.html)
+Pages:
+Login/Register/ForgetPassword
+Dashboard(Admin/Company)
+Profile
+Company(Admin)
+Shop(Admin/Company)
+User(Admin/Company)
+Balance(Company)
+Card(Company)
+Code(Company)
+Sale(Shop)
+
+
+Mobile operators: (https://www.indexmundi.com/norway/cell-phone-companies-in-norway.html)
+Telenor Mobil
+Telia
+ICE.net
+Talkmore
+LycaMobile
+MyCall
+Chess
+NetCom
+djuice
+Lebara AS
+Lyse
+Mobitalk AS
+One Call
+Tele2
+Tussa-24 AS
+Vitel
+Hello
+
+Email Content:
+
+Website:
+Name:
+Email:
+Password:
+Company:
+Shop:
+
+Please login using the Email/Password given below, goto Profile -> Change Password
+
+
+
+
+
+
+

@@ -1,0 +1,32 @@
+Add balance modal popup not showing when bootstrap.js not included (DONE)
+Add registrationid while creating shop (DONE)
+Print receipt (DONE)
+
+
+form validations
+form error/success messages
+testing
+
+
+Pages:
+Two Dashboard(functional)
+User(delete) (DONE)
+Company(edit,delete) (DONE)
+Shop(edit,delete) (DONE)
+Template(edit,delete) (DONE)
+Card(edit,delete) (DONE)
+
+
+Dashboard fo admin:
+Companies count
+Shop count
+user count
+Total sale
+Total balance added
+
+Dashboard for company:
+Cards count
+Shop count
+user count
+Total sale
+Total balance added

@@ -1,0 +1,241 @@
+﻿@using EasyTopup.Web.Extensions
+@*@model EasyTopup.Data.ViewModels.LayoutViewModel*@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta name="description" content="Easy topup is a web application to provide scratch card services to user mobile.">
+    <meta name="keywords" content="easy topup, easy topup user, easy topup company, easy topup shop, easy topup balance, easy topup cards, easy topup codes">
+    <meta name="author" content="EASY_TOPUP">
+    <title>@ViewData["Title"] - Easy Topup</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/app-assets/images/logo/topup_64.png">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/charts/apexcharts.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/extensions/dragula.min.css">
+    <!-- END: Vendor CSS-->
+    <!-- BEGIN: Theme CSS-->
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/bootstrap-extended.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/colors.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/components.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/themes/dark-layout.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/themes/semi-dark-layout.min.css">
+    <!-- END: Theme CSS-->
+    <!-- BEGIN: Page CSS-->
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/core/menu/menu-types/vertical-menu.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/pages/authentication.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/css/plugins/forms/validation/form-validation.css">
+    <!-- END: Page CSS-->
+    <!-- BEGIN: Custom CSS-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <!-- END: Custom CSS-->
+    @RenderSection("Styles", required: false)
+</head>
+<!-- END: Head-->
+<!-- BEGIN: Body-->
+<body class="vertical-layout vertical-menu-modern dark-layout 2-columns  navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns" data-layout="dark-layout">
+    <!-- BEGIN: Header-->
+    <div class="header-navbar-shadow"></div>
+    <nav class="header-navbar main-header-navbar navbar-expand-lg navbar navbar-with-menu fixed-top navbar-dark">
+        <div class="navbar-wrapper">
+            <div class="navbar-container content">
+                <div class="navbar-collapse" id="navbar-mobile">
+                    <div class="mr-auto float-left bookmark-wrapper d-flex align-items-center">
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item mobile-menu d-xl-none mr-auto">
+                                <a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#">
+                                    <i class="ficon bx bx-menu"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        @if (LocalStorageExtensions.Exists(StorageType.Token) && LocalStorageExtensions.Get(StorageType.Role) == "Shop")
+                        {
+                            <h4 class="text-bold-600">Balance: <code id="balance">@LocalStorageExtensions.Get(StorageType.Balance)</code><code>NOK</code></h4>
+                        }
+                    </div>
+                    <ul class="nav navbar-nav float-right">
+                        <li class="dropdown dropdown-language nav-item">
+                            <a class="dropdown-toggle nav-link" id="dropdown-flag" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="flag-icon flag-icon-us"></i><span class="selected-language">English</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdown-flag">
+                                <a class="dropdown-item" href="#" data-language="en">
+                                    <i class="flag-icon flag-icon-us mr-50"></i> English
+                                </a>
+                                <a class="dropdown-item" href="#" data-language="no">
+                                    <i class="flag-icon flag-icon-no mr-50"></i> Norwegian
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item d-none d-lg-block">
+                            <a class="nav-link nav-link-expand">
+                                <i class="ficon bx bx-fullscreen"></i>
+                            </a>
+                        </li>
+                        @await Html.PartialAsync("_LoginPartial")
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- END: Header-->
+    <!-- BEGIN: Main Menu-->
+    <div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item mr-auto">
+                    @if (LocalStorageExtensions.Exists(StorageType.Token) &&
+                   (LocalStorageExtensions.Get(StorageType.Role) == "Admin" ||
+                    LocalStorageExtensions.Get(StorageType.Role) == "Company"))
+                    {
+                        <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="navbar-brand">
+                            <div class="brand-logo"></div>
+                            <h2 class="brand-text mb-0" style="font-size: 18px;">Easy Topup</h2>
+                        </a>
+                    }
+                    else if (LocalStorageExtensions.Exists(StorageType.Token) &&
+                             LocalStorageExtensions.Get(StorageType.Role) == "Shop")
+                    {
+                        <a asp-area="" asp-controller="Sale" asp-action="Index" class="navbar-brand">
+                            <div class="brand-logo"></div>
+                            <h2 class="brand-text mb-0" style="font-size: 18px;">Easy Topup</h2>
+                        </a>
+                    }
+
+                </li>
+                <li class="nav-item nav-toggle">
+                    <a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse">
+                        <i class="bx bx-x d-block d-xl-none font-medium-4 primary"></i>
+                        <i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block primary" data-ticon="bx-disc"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="shadow-bottom"></div>
+        <div class="main-menu-content">
+            @await Html.PartialAsync("_MenuPartial")
+        </div>
+    </div>
+    <!-- END: Main Menu-->
+    <!-- BEGIN: Content-->
+    <div class="app-content content">
+        <div class="content-overlay"></div>
+        @RenderBody()
+    </div>
+    <!-- END: Content-->
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+    <!-- BEGIN: Footer-->
+    <footer class="footer footer-static footer-dark">
+        <p class="clearfix mb-0">
+            <span class="float-left d-inline-block">2020 &copy; Easy Topup</span>
+            <button class="btn btn-primary btn-icon scroll-top" type="button"><i class="bx bx-up-arrow-alt"></i></button>
+        </p>
+    </footer>
+    <!-- END: Footer-->
+    <!-- Button trigger for Disabled Backdrop -->
+    <button type="button" id="btnModalCompany" class="btn btn-outline-primary block" data-toggle="modal" data-backdrop="false" data-target="#modalCompany" style="display: none;"></button>
+    <!--Disabled Backdrop Modal -->
+    <div class="modal fade text-left" id="modalCompany" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel4">Complete you profile</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @if (LocalStorageExtensions.Exists(StorageType.Token) &&
+(LocalStorageExtensions.Get(StorageType.Role) == "Company" || LocalStorageExtensions.Get(StorageType.Role) == "Shop") &&
+LocalStorageExtensions.Get(StorageType.IsCompanySelected) == "False")
+                        {
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Company</label>
+                                    <select class="form-control" id="company">
+                                        <option value="1">Company1</option>
+                                        <option value="2">Company2</option>
+                                        <option value="3">Company3</option>
+                                        <option value="4">Company4</option>
+                                        <option value="5">Company5</option>
+                                    </select>
+                                    @*@Html.DropDownListFor(m => m.CompanyId, new MultiSelectList(Model.listCompanies, "CompanyId", "Name"), new { @class = "form-control", @id = "company", @disabled = "disabled" })*@
+                                </div>
+                            </div>
+                        }
+                        @if (LocalStorageExtensions.Exists(StorageType.Token) &&
+LocalStorageExtensions.Get(StorageType.Role) == "Shop" &&
+LocalStorageExtensions.Get(StorageType.IsShopSelected) == "False")
+                        {
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Shop</label>
+                                    <select class="form-control" id="shop">
+                                        <option value="1">Shop1</option>
+                                        <option value="2">Shop2</option>
+                                        <option value="3">Shop3</option>
+                                        <option value="4">Shop4</option>
+                                        <option value="5">Shop5</option>
+                                    </select>
+                                    @*@Html.DropDownListFor(m => m.ShopId, new MultiSelectList(Model.listShops, "ShopId", "Name"), new { @class = "form-control", @id = "shop", @disabled = "disabled" })*@
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnSaveSettings" class="btn btn-primary ml-1" data-dismiss="modal">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Save</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BEGIN: Vendor JS-->
+    <script src="~/app-assets/vendors/js/vendors.min.js"></script>
+    <script src="~/app-assets/fonts/LivIconsEvo/js/LivIconsEvo.tools.min.js"></script>
+    <script src="~/app-assets/fonts/LivIconsEvo/js/LivIconsEvo.defaults.min.js"></script>
+    <script src="~/app-assets/fonts/LivIconsEvo/js/LivIconsEvo.min.js"></script>
+    <!-- BEGIN Vendor JS-->
+    <!-- BEGIN: Page Vendor JS-->
+    <script src="~/app-assets/vendors/js/charts/apexcharts.min.js"></script>
+    <script src="~/app-assets/vendors/js/extensions/dragula.min.js"></script>
+    <!-- END: Page Vendor JS-->
+    <!-- BEGIN: Theme JS-->
+    <script src="~/app-assets/js/scripts/configs/vertical-menu-dark.min.js"></script>
+    <script src="~/app-assets/js/core/app-menu.min.js"></script>
+    <script src="~/app-assets/js/core/app.min.js"></script>
+    <script src="~/app-assets/js/scripts/components.min.js"></script>
+    <script src="~/app-assets/js/scripts/footer.min.js"></script>
+    <script src="~/app-assets/js/scripts/customizer.min.js"></script>
+    <!-- END: Theme JS-->
+    <!-- BEGIN: Page JS-->
+    @*<script src="~/app-assets/vendors/js/forms/validation/jqBootstrapValidation.js"></script>
+        <script src="~/app-assets/js/scripts/forms/validation/form-validation.js"></script>*@
+    <!-- END: Page JS-->
+    <script src="~/assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script type="text/javascript">
+        var UserId = "@LocalStorageExtensions.Get(StorageType.UserId)";
+        var Username = "@LocalStorageExtensions.Get(StorageType.Name)";
+        var UserRole = "@LocalStorageExtensions.Get(StorageType.Role)";
+        var UserPicture = "@LocalStorageExtensions.Get(StorageType.Picture)";
+        var IsCompanySelected = "@LocalStorageExtensions.Get(StorageType.IsCompanySelected)";
+        var IsShopSelected = "@LocalStorageExtensions.Get(StorageType.IsShopSelected)";
+    </script>
+    <!-- BEGIN: Page JS-->
+    <script src="~/app-assets/js/scripts/modal/components-modal.min.js"></script>
+    <!-- END: Page JS-->
+    <!-- BEGIN: Custom JS-->
+    <script src="~/assets/js/main.js"></script>
+    <!-- END: Custom JS-->
+    @RenderSection("Scripts", required: false)
+</body>
+<!-- END: Body-->
+</html>

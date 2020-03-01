@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\CalendarViewModel.cs" />
+    <Compile Remove="ViewModels\CommentsViewModel.cs" />
+    <Compile Remove="ViewModels\ConverstaionViewModel.cs" />
+    <Compile Remove="ViewModels\EmailViewModel.cs" />
+    <Compile Remove="ViewModels\FeedViewModel.cs" />
+    <Compile Remove="ViewModels\FinanceViewModel.cs" />
+    <Compile Remove="ViewModels\QuestionViewModel.cs" />
+    <Compile Remove="ViewModels\SearchViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.1.0" />
+  </ItemGroup>
+
+</Project>

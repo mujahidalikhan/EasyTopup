@@ -1,0 +1,170 @@
+﻿@model EasyTopup.Data.ViewModels.TemplateViewModel
+@using EasyTopup.Web.Extensions
+@{
+    ViewData["Title"] = "Templates";
+}
+@section Styles{
+    <!-- BEGIN: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="~/app-assets/vendors/css/tables/datatable/datatables.min.css">
+    <!-- END: Vendor CSS-->
+}
+@section Scripts{
+    <!-- BEGIN: Page Vendor JS-->
+    <script src="~/app-assets/vendors/js/tables/datatable/datatables.min.js"></script>
+    <script src="~/app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/js/jquery.mask.min.js"></script>
+    <!-- END: Page Vendor JS-->
+    <script>
+        var oTable = $('#tableTemplates').DataTable({
+            //data: [],
+            filter: true,
+            lengthChange: true,
+            paging: true,
+            info: true,
+            autoWidth: false,
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            pageLength: 5,
+            aaSorting: [[0, 'asc']],
+            columns: [
+                { title: "name", width: "30%" },
+                { title: "status", width: "30%" },
+                { title: "date", width: "30%" },
+                { title: "actions", width: "10%" },
+            ]
+        });
+
+        oTable.on('click', ".block", function (e) {
+            if (confirm("Are you sure you want to delete this template?")) {
+                var templateId = $(this).attr("template-id");
+                var row = $(e.currentTarget).closest("tr");
+                oTable.row(row).remove().draw(true);
+                var dataContract = {
+                    templateId: templateId,
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/Template/Block/",
+                    async: true,
+                    dataType: "json",
+                    data: dataContract,
+                    success: function (resp) {
+                    },
+                    failure: function (resp) {
+                    },
+                    error: function (resp) {
+                    }
+                });
+            }
+            else {
+                alert("False");
+                return false;
+            }
+        });
+    </script>
+}
+
+<div class="content-wrapper">
+    <div class="content-header row">
+        <div class="content-header-left col-12 mb-2 mt-1">
+            <div class="row breadcrumbs-top">
+                <div class="col-6">
+                    <h5 class="content-header-title float-left pr-1 mb-0" style="border-right: none;">@ViewData["Title"]</h5>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary glow float-right" data-toggle="modal" data-target="#modalAddTemplate" data-backdrop="false">Add Template</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <!-- users list start -->
+        <section class="users-list-wrapper">
+            <div class="users-list-table">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <!-- datatable start -->
+                            <div class="table-responsive">
+                                <table id="tableTemplates" class="table">
+                                    <tbody>
+                                        @foreach (var item in Model.listTemplate)
+                                        {
+                                        <tr>
+                                            <td><a href="javascript:void(0)">@item.Name</a></td>
+                                            <td>
+                                                @if (item.IsDelete == false)
+                                                {
+                                                    <span class="badge badge-light-success">Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-light-danger">Banned</span>
+                                                }
+                                            </td>
+                                            <td>@item.Timestamp.ToString("ddd, dd MMM yyy HH':'mm':'ss 'GMT'")</td>
+                                            <td>
+                                                <a href="javascript:void(0)" class="block" data-toggle="tooltip" title="" template-id="@item.EmailTemplateId" data-original-title="Delete Template">
+                                                    <i class="bx bxs-x-circle"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- datatable ends -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- users list ends -->
+    </div>
+</div>
+
+<!--Default size Modal -->
+<div class="modal fade text-left" id="modalAddTemplate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel18" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel18">Add Template</h4>
+            </div>
+            @using (Html.BeginForm("Create", "Template", FormMethod.Post, new { @id = "form-template" }))
+            {
+                <div class="modal-body">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="form-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @id = "name" })
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label>Content</label>
+                                            @Html.TextArea("Content", Model.Content, new { @class = "form-control", @id = "content", @rows = "3" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                        <i class="bx bx-x d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Close</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary ml-1">
+                        <i class="bx bx-check d-block d-sm-none"></i>
+                        <span class="d-none d-sm-block">Save</span>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

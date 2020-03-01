@@ -1,0 +1,11 @@
+{
+  "Balance": "\"650.00\"",
+  "Token": "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtdWhhbW1hZEBnbWFpbC5jb20iLCJqdGkiOiI4ZjA5YjcwZi04OTJkLTRmZWItODNhYi0xYTc0ZjQ1N2MxZDUiLCJpYXQiOjE1ODIzMDY4NDIsInJvbCI6ImFwaV9hY2Nlc3MiLCJpZCI6IjQ5MjFhZGY1LTJmOWItNDlhMy05YzJjLWQ2OTk1ZjYyYjU2MCIsIm5iZiI6MTU4MjMwNjg0MSwiZXhwIjoxNTgyMzUwMDQxfQ.21C0XUsUBi7_Rh8MpGjq_uQWmDlFHa3wI-gHBMJ8JHY\"",
+  "UserId": "\"4921adf5-2f9b-49a3-9c2c-d6995f62b560\"",
+  "Username": "\"muhammad@gmail.com\"",
+  "Picture": "\"/app-assets/images/user.png\"",
+  "Role": "\"Shop\"",
+  "Name": "\"muhammad mm\"",
+  "IsCompanySelected": "\"True\"",
+  "IsShopSelected": "\"True\""
+}

@@ -1,0 +1,285 @@
+﻿@model EasyTopup.Data.ViewModels.SaleViewModel
+@{
+    ViewData["Title"] = "Sales";
+}
+@section Styles{
+    <style>
+        body.dark-layout label, body.dark-layout p, body.dark-layout small, body.dark-layout span {
+            color: #464D5C;
+        }
+        .text-primary {
+            color: #464D5C !important;
+        }
+
+        body.dark-layout .table thead th {
+            color: #5A8DEE !important;
+        }
+
+        @@media screen {
+          #printSection {
+              display: none;
+          }
+        }
+
+        @@media print {
+          body * {
+            visibility:hidden;
+          }
+          #printSection, #printSection * {
+            visibility:visible;
+          }
+          #printSection {
+            position:absolute;
+            left:0;
+            top:0;
+          }
+        }
+    </style>
+}
+@section Scripts{
+    <script src="~/assets/js/moment.min.js"></script>
+    <script>
+        $(".card").click(function () {
+            if (confirm("Are you sure you want to buy this card?")) {
+                var cardId = $(this).attr("card-id");
+                CreateSale(cardId);
+            }
+            else {
+            }
+        });
+
+        function CreateSale(cardId) {
+            var model = {
+                UserId: "",
+                CardId: cardId,
+                pageId: "",
+                pageSize: "",
+            };
+            $.ajax({
+                type: "POST",
+                url: "/Sale/Create/",
+                async: true,
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(model),
+                success: function (resp) {
+                    $("#saleId").text(pad(resp.saleId, 6));
+                    $("#saleTime").text(moment(resp.saleTime).format('DD/MM/YYYY'));
+                    $("#companyPhoto").attr("src", resp.companyPhoto);
+                    $("#code").text(resp.code);
+                    $("#soldByName").text(resp.soldByName);
+                    $("#soldByEmail").text(resp.soldByEmail);
+                    $("#shopInfo").text(resp.shopName + " - " + resp.shopAddress);
+                    $("#shopPhone").text(resp.shopPhone);
+                    $(".cardName").text(resp.cardName);
+                    $(".cardDescription").text(resp.cardDescription);
+                    $(".amount").text(resp.amount + ".00");
+                    $("#generateReceipt").click();
+
+                    //Update remaining balance of shop user
+                    var currentAmount = $("#balance").text() - resp.amount;
+                    $("#balance").text(currentAmount + ".00");
+                },
+                failure: function (resp) {
+                    alert(resp.message);
+                },
+                error: function (resp) {
+                    alert(resp.message);
+                }
+            });
+        }
+
+        $("#btnPrint").click(function () {
+            printElement(document.getElementById("printThis"));
+        });
+
+        function printElement(elem) {
+            var domClone = elem.cloneNode(true);
+
+            var $printSection = document.getElementById("printSection");
+
+            if (!$printSection) {
+                var $printSection = document.createElement("div");
+                $printSection.id = "printSection";
+                document.body.appendChild($printSection);
+            }
+
+            $printSection.innerHTML = "";
+            $printSection.appendChild(domClone);
+            window.print();
+
+            $("#btnClosePrint").click();
+        }
+    </script>
+}
+
+<div class="content-wrapper">
+    <div class="content-header row">
+        <div class="content-header-left col-12 mb-2 mt-1">
+            <div class="row breadcrumbs-top">
+                <div class="col-6">
+                    <h5 class="content-header-title float-left pr-1 mb-0" style="border-right: none;">@ViewData["Title"]</h5>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary glow float-right" data-toggle="modal" data-target="#modalReceipt" data-backdrop="false" id="generateReceipt" style="display:none;">Generate Receipt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body">
+        <div class="row">
+            @if (Model.listCards != null && Model.listCards.Count > 0)
+            {
+                foreach (var item in Model.listCards)
+                {
+                    <div class="col-xl-4 col-sm-6 col-12">
+                        <div class="card text-center bg-secondary bg-lighten-1" style="cursor: pointer" card-id="@item.CardId">
+                            <div class="card-content text-white">
+                                <div class="card-body">
+                                    <img src="@item.Photo" alt="@item.Name" class="mb-1 w-100" height="200">
+                                    <h4 class="card-title white">@item.Name</h4>
+                                    <p class="card-text">@item.Description</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<!--Default size Modal -->
+<div class="modal fade text-left" id="modalReceipt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel18" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel18">Receipt</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card" id="printThis">
+                            <div class="card-content" style="background-color:white">
+                                <div class="card-body pb-0 mx-25" style="background-color:white">
+                                    <!-- header section -->
+                                    <div class="row">
+                                        <div class="col-xl-4 col-md-12">
+                                            <span class="invoice-number mr-50">Receipt#</span>
+                                            <span id="saleId"></span>
+                                        </div>
+                                        <div class="col-xl-8 col-md-12">
+                                            <div class="d-flex align-items-center justify-content-xl-end flex-wrap">
+                                                <div>
+                                                    <small class="text-muted">Date:</small>
+                                                    <span id="saleTime"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- logo and title -->
+                                    <div class="row my-3">
+                                        <div class="col-6">
+                                            <h4 style="color: #5A8DEE !important;" class="cardName"></h4>
+                                            <span class="cardDescription"></span>
+                                        </div>
+                                        <div class="col-6 d-flex justify-content-end">
+                                            <img src="../../../app-assets/images/pages/pixinvent-logo.png" id="companyPhoto" alt="logo" height="46" width="164">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <!-- receipt address and contact -->
+                                    <div class="row invoice-info">
+                                        <div class="col-6 mt-1">
+                                            <h6 class="invoice-to" style="color: #5A8DEE !important;">Code</h6>
+                                            <div class="mb-1">
+                                                <span class="font-weight-bold" id="code"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mt-1">
+                                            <h6 class="invoice-from" style="color: #5A8DEE !important;">Receipt Generated By:</h6>
+                                            <div class="mb-1">
+                                                <span id="soldByName"></span>
+                                            </div>
+                                            <div class="mb-1">
+                                                <span id="soldByEmail"></span>
+                                            </div>
+                                            <div class="mb-1">
+                                                <span id="shopInfo"></span>
+                                            </div>
+                                            <div class="mb-1">
+                                                <span id="shopPhone"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                                <!-- product details table-->
+                                <div class="invoice-product-details table-responsive" style="background-color:white">
+                                    <table class="table table-borderless mb-0">
+                                        <thead>
+                                            <tr class="border-0">
+                                                <th scope="col">Item</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Cost</th>
+                                                <th scope="col" class="text-right">Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-primary cardName" id=""></td>
+                                                <td class="text-primary cardDescription"></td>
+                                                <td class="text-primary amount"></td>
+                                                <td class="text-primary text-right">NOK <span class="amount"></span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- receipt subtotal -->
+                                <div class="card-body pt-0 mx-25" style="background-color:white">
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-4 col-sm-6 mt-75">
+                                            <p>Thanks for your business.</p>
+                                        </div>
+                                        <div class="col-8 col-sm-6 d-flex justify-content-end mt-75">
+                                            <div class="invoice-subtotal">
+                                                <div class="invoice-calc d-flex justify-content-between">
+                                                    <span class="invoice-title">Subtotal</span>
+                                                    <span class="invoice-value">NOK <span class="amount"></span></span>
+                                                </div>
+                                                <div class="invoice-calc d-flex justify-content-between">
+                                                    <span class="invoice-title">Discount</span>
+                                                    <span class="invoice-value">NOK 0.0</span>
+                                                </div>
+                                                <div class="invoice-calc d-flex justify-content-between">
+                                                    <span class="invoice-title">Tax</span>
+                                                    <span class="invoice-value">0%</span>
+                                                </div>
+                                                <hr>
+                                                <div class="invoice-calc d-flex justify-content-between">
+                                                    <span class="invoice-title">Total</span>
+                                                    <span class="invoice-value font-weight-bold">NOK <span class="amount"></span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-secondary" data-dismiss="modal" id="btnClosePrint" style="display:none;">
+                    <i class="bx bx-x d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Close</span>
+                </button>
+                <button type="button" class="btn btn-primary ml-1" id="btnPrint">
+                    <i class="bx bx-check d-block d-sm-none"></i>
+                    <span class="d-none d-sm-block">Print</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
